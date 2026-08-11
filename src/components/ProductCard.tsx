@@ -1,4 +1,5 @@
 import type { Product } from '../interfaces/product';
+import { Link } from 'react-router-dom';
 
 interface ProductCardProps {
   product: Product;
@@ -14,7 +15,6 @@ function ProductCard({ product }: ProductCardProps) {
           className='h-full object-contain'
         />
       </div>
-
       <div className='p-4'>
         <h2 className='font-semibold text-xl mt-4'>{product.title}</h2>
 
@@ -24,6 +24,12 @@ function ProductCard({ product }: ProductCardProps) {
           ${product.price.toFixed(2)}
         </p>
       </div>
+      <Link
+        to={`/products/${product.id}`}
+        className='mt-5 block w-full rounded-lg bg-purple-600 py-2 text-center text-white hover:bg-purple-700'
+      >
+        View Details
+      </Link>{' '}
     </div>
   );
 }

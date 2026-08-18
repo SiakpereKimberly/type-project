@@ -66,6 +66,7 @@ function ProductDetails({
   }
 
   async function handleAddToCart() {
+    if (!product) return;
     setIsAdding(true);
 
     await new Promise((resolve) => setTimeout(resolve, 500));

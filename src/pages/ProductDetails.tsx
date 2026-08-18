@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import type { Product } from '../interfaces/product';
+import { toast } from 'sonner';
 
 function ProductDetails({
   addToCart,
@@ -8,10 +9,13 @@ function ProductDetails({
   addToCart: (product: Product) => void;
 }) {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isAdding, setIsAdding] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -61,6 +65,41 @@ function ProductDetails({
     );
   }
 
+  async function handleAddToCart() {
+    setIsAdding(true);
+
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    addToCart(product);
+
+    setIsAdding(false);
+  }
+
+  async function deleteProduct() {
+    console.log('Deleting product with ID:', id);
+
+    setIsDeleting(true);
+
+    try {
+      const response = await fetch(`https://fakestoreapi.com/products/${id}`, {
+        method: 'DELETE',
+      });
+
+      console.log('Delete response:', response);
+
+      if (!response.ok) {
+        throw new Error('Failed to delete product');
+      }
+
+      toast.success('Product deleted successfully!');
+      navigate('/');
+    } catch {
+      setError('Failed to delete product.');
+    } finally {
+      setIsDeleting(false);
+    }
+  }
+
   return (
     <div className='min-h-screen bg-gray-100 py-12'>
       <div className='mx-auto max-w-5xl px-6'>
@@ -89,10 +128,27 @@ function ProductDetails({
             </p>
 
             <button
-              onClick={() => addToCart(product)}
-              className='mt-8 rounded-lg bg-purple-600 px-6 py-3 font-semibold text-white transition hover:bg-purple-700'
+              onClick={handleAddToCart}
+              disabled={isAdding}
+              className='mt-8 flex items-center justify-center rounded-lg bg-purple-600 px-6 py-3 font-semibold text-white transition hover:bg-purple-700 disabled:cursor-not-allowed disabled:opacity-70'
             >
-              Add to Cart
+              {isAdding && (
+                <span className='mr-2 inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent' />
+              )}
+
+              {isAdding ? 'Adding...' : 'Add to Cart'}
+            </button>
+
+            <button
+              onClick={deleteProduct}
+              disabled={isDeleting}
+              className='mt-4 flex items-center justify-center rounded-lg bg-red-600 px-6 py-3 font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-70'
+            >
+              {isDeleting && (
+                <span className='mr-2 inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent' />
+              )}
+
+              {isDeleting ? 'Deleting...' : 'Delete Product'}
             </button>
           </div>
         </div>
@@ -100,4 +156,5 @@ function ProductDetails({
     </div>
   );
 }
+
 export default ProductDetails;

@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { Product } from '../interfaces/product';
 import ProductCard from '../components/ProductCard';
-import { Link } from 'react-router-dom';
 
 function Home() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -52,13 +51,6 @@ function Home() {
     <div className='min-h-screen bg-gray-100 py-10'>
       <div className='mx-auto w-full max-w-5xl px-6'>
         <h1 className='mb-8 text-center text-4xl font-bold'>Kim Store</h1>
-
-        <Link
-          to='/cart'
-          className='rounded-lg bg-purple-600 px-5 py-3 font-semibold text-white hover:bg-purple-700'
-        >
-          Cart
-        </Link>
 
         <div className='grid grid-cols-1 gap-8 md:grid-cols-2'>
           {products.map((product) => (
